@@ -1,6 +1,7 @@
 #lang rosette
 
 (require "../Lib/symbolic-manipulation.rkt")
+(require "./symbol-table.rkt")
 
 (provide interpret)
 
@@ -13,8 +14,9 @@
   (match (list-ref name-list 0)
     ['Symbol (match (list-ref name-list 2)
 	       ["+" +]
-	       )]))
-		 
+	       )]
+    ;; Match a varid or conid; TODO: conid
+    ['Ident (create/get-ident (list-ref name-list 2))]))
 
 ;; Interprets a qualified name
 (define (interpret-QName! qname-list)
@@ -29,20 +31,21 @@
 ;; Interprets a given expression.
 (define (interpret-exp! exp s-expr-port)
   (match exp 
-    ;; If the expression is a list, then convert it to an input
-    ;; and interpret said input
     ['Lit (begin
 	    ;; Discard SrcSpan
 	    (read s-expr-port)
 	    ;; Create input for literal
 	    (interpret-literal! (read s-expr-port)))]
+    ['Var (begin
+	    (read s-expr-port)
+	    (interpret-QName! (read s-expr-port)))]
     ;; Infix operator application; read arguments, operator, apply
     ['InfixApp (begin
 		 (read s-expr-port)
-		 (define item-1 (interpret (open-input-list (read s-expr-port))))
-		 (define op (interpret-QOp! (read s-expr-port)))
-		 (define item-2 (interpret (open-input-list (read s-expr-port))))
-		 (op item-1 item-2))]))
+		 (let ([item-1 (interpret (open-input-list (read s-expr-port)))]
+		       [op (interpret-QOp! (read s-expr-port))]
+		       [item-2 (interpret (open-input-list (read s-expr-port)))])
+		   (op item-1 item-2)))]))
 
 (define (interpret s-expr-port)
   (define s-expr (read s-expr-port))
