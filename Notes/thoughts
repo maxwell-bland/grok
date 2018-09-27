@@ -1,0 +1,6 @@
+Symbolic execution. Execute the function symbolically, and build up a symbolic
+expression that represents the output of the function, in terms of a bunch of
+variables (unknowns) that represent the inputs to the function. Then build a
+formula by setting that expression equal to the desired output, feed that
+formula to a SMT solver and ask the solver to find a satisfying assignment for
+the formula.
