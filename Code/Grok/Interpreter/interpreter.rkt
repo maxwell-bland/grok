@@ -100,7 +100,11 @@
 	    (define-symbolic top-level integer?)
 	    (letrec ([decl (interpret-decl! (build-list-exp s-expr-port))]
 		     ;; OR all the paths together
-		     [paths (apply || (symbolic-exec decl top-level))])
+		     [paths (let ([constraints (symbolic-exec decl top-level)])
+			      (cond
+			       [(list? constraints) (apply || constraints)]
+			       [else constraints])
+			     )])
 	      (begin
 		(solve (assert (and paths (> top-level 10))))
 		)
