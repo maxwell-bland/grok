@@ -1,5 +1,6 @@
 
-./Concrete.hs,0
+./Concrete.hs,9
+f f0,1
 
 ./abstract.hs,60
 sumsize sumsize0,1
