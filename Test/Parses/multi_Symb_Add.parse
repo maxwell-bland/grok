@@ -1,0 +1,60 @@
+InfixApp
+  (SrcSpanInfo
+     {srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10, srcInfoPoints = []})
+  (InfixApp
+     (SrcSpanInfo
+        {srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 6, srcInfoPoints = []})
+     (Var
+        (SrcSpanInfo
+           {srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 2, srcInfoPoints = []})
+        (UnQual
+           (SrcSpanInfo
+              {srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 2, srcInfoPoints = []})
+           (Ident
+              (SrcSpanInfo
+                 { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 2
+                 , srcInfoPoints = []
+                 })
+              "a")))
+     (QVarOp
+        (SrcSpanInfo
+           {srcInfoSpan = SrcSpan "<unknown>.hs" 1 3 1 4, srcInfoPoints = []})
+        (UnQual
+           (SrcSpanInfo
+              {srcInfoSpan = SrcSpan "<unknown>.hs" 1 3 1 4, srcInfoPoints = []})
+           (Symbol
+              (SrcSpanInfo
+                 { srcInfoSpan = SrcSpan "<unknown>.hs" 1 3 1 4
+                 , srcInfoPoints = []
+                 })
+              "+")))
+     (Var
+        (SrcSpanInfo
+           {srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 6, srcInfoPoints = []})
+        (UnQual
+           (SrcSpanInfo
+              {srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 6, srcInfoPoints = []})
+           (Ident
+              (SrcSpanInfo
+                 { srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 6
+                 , srcInfoPoints = []
+                 })
+              "b"))))
+  (QVarOp
+     (SrcSpanInfo
+        {srcInfoSpan = SrcSpan "<unknown>.hs" 1 7 1 8, srcInfoPoints = []})
+     (UnQual
+        (SrcSpanInfo
+           {srcInfoSpan = SrcSpan "<unknown>.hs" 1 7 1 8, srcInfoPoints = []})
+        (Symbol
+           (SrcSpanInfo
+              {srcInfoSpan = SrcSpan "<unknown>.hs" 1 7 1 8, srcInfoPoints = []})
+           "+")))
+  (Lit
+     (SrcSpanInfo
+        {srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 10, srcInfoPoints = []})
+     (Int
+        (SrcSpanInfo
+           {srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 10, srcInfoPoints = []})
+        1
+        "1"))

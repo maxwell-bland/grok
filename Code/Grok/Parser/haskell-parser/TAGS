@@ -8,7 +8,7 @@ main main0,1
 
 ./src/Lib.hs,46
 module LibLib0,1
-parseFile parseFile10,11
+parseFile parseFile12,13
 
 ./Setup.hs,15
 main main1,2

@@ -11,6 +11,8 @@
 (define (create/get-ident id)
   (let ([val (hash-ref ident-hash id (void))])
     (cond
+     [(string=? id "True") #t]
+     [(string=? id "False") #f]
      [(void? val) (begin
 		    (define-symbolic* ident integer?)
 		    (hash-set! ident-hash id ident)

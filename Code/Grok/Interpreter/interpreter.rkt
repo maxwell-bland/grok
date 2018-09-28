@@ -6,12 +6,12 @@
 (provide interpret)
 
 (define (interpret-literal! lit-list)
-  (match (list-ref lit-list 0)
+  (match (car lit-list)
     ;; The third in the list is the actual val
     ['Int (list-ref lit-list 2)]))
 
 (define (interpret-Name! name-list)
-  (match (list-ref name-list 0)
+  (match (car name-list)
     ['Symbol (match (list-ref name-list 2)
 	       ["+" +]
 	       )]
@@ -20,40 +20,65 @@
 
 ;; Interprets a qualified name
 (define (interpret-QName! qname-list)
-  (match (list-ref qname-list 0)
+  (match (car qname-list)
     ['UnQual (interpret-Name! (list-ref qname-list 2))]))
 
 ;; Interprets a qualified operation
 (define (interpret-QOp! qop-list)
-  (match (list-ref qop-list 0)
+  (match (car qop-list)
     ['QVarOp (interpret-QName! (list-ref qop-list 2))]))
 
 ;; Interprets a given expression.
-(define (interpret-exp! exp s-expr-port)
-  (match exp 
-    ['Lit (begin
-	    ;; Discard SrcSpan
-	    (read s-expr-port)
-	    ;; Create input for literal
-	    (interpret-literal! (read s-expr-port)))]
-    ['Var (begin
-	    (read s-expr-port)
-	    (interpret-QName! (read s-expr-port)))]
+(define (interpret-exp! exp-list)
+  (match (car exp-list) 
+    ['Lit (interpret-literal! (list-ref exp-list 2))]
+    ['Var (interpret-QName! (list-ref exp-list 2))]
+    ['If (map interpret-exp! (list (list-ref exp-list 2) (list-ref exp-list 3) (list-ref exp-list 4)))]
+    ;; TODO make this actually construct vals
+    ['Con (interpret-QName! (list-ref exp-list 2))]
     ;; Infix operator application; read arguments, operator, apply
-    ['InfixApp (begin
-		 (read s-expr-port)
-		 (let ([item-1 (interpret (open-input-list (read s-expr-port)))]
-		       [op (interpret-QOp! (read s-expr-port))]
-		       [item-2 (interpret (open-input-list (read s-expr-port)))])
-		   (op item-1 item-2)))]))
+    ['InfixApp (let ([item-1 (interpret-exp! (list-ref exp-list 2))]
+		       [op (interpret-QOp! (list-ref exp-list 3))]
+		       [item-2 (interpret-exp! (list-ref exp-list 4))])
+		   (op item-1 item-2))]))
 
-(define (interpret s-expr-port)
-  (define s-expr (read s-expr-port))
-  (cond
-   ;; If Symbol, then we are at a top level of an s-expr,
-   ;; interpret it!
-   [(symbol? s-expr) (interpret-exp! s-expr s-expr-port)]
-   ;; If EOF is reached, return a string for Done
-   [(eof-object? s-expr) "Done!"]
-   ;; else continue to interpret the expression
-   [else (interpret s-expr-port)]))
+;; Arguements to a function, but really any pattern to match
+(define (interpret-Pat! pat-list)
+  (match (car pat-list)
+    ['PVar (interpret-Name! (list-ref pat-list 2))]))
+
+ ;; The right hand side of a function binding, pattern binding, or
+ ;; a case alternative. TODO: gaurded rhs.
+(define (interpret-Rhs! rhs-list)
+  (match (car rhs-list)
+    ['UnGuardedRhs (interpret-exp! (list-ref rhs-list 2))]))
+
+;; Clauses for function binding
+;; todo: make this work for the other clause
+(define (interpret-Match! match-list)
+  (match (car match-list)
+    ;; Todo, make this handle mre than one argument
+    ;; Todo: where bindings
+    ['Match (let ([fun-id (interpret-Name! (list-ref match-list 2))]
+		  [args (interpret-Pat! (list-ref match-list 3))]
+		  [rhs (interpret-Rhs! (list-ref match-list 4))])
+	      (list fun-id args rhs))]))
+
+(define (interpret-decl! decl-list)
+  (match (car decl-list)
+    ;; TODO: make this work for more than one match
+    ['FunBind (interpret-Match! (list-ref decl-list 2))]))
+
+;; Takes an input port representing an s-expr and builds it into a list by
+;; reading each part
+(define (build-list-exp s-expr-port) 
+  (let ([s-expr (read s-expr-port)])
+    (cond
+     [(eof-object? s-expr) '()]
+     [else (cons s-expr (build-list-exp s-expr-port))])))
+
+(define (interpret s-expr-port interpret-type)
+  (match interpret-type
+    ["expr" (interpret-exp! (build-list-exp s-expr-port))]
+    [else (interpret-decl! (build-list-exp s-expr-port))]
+    ))
