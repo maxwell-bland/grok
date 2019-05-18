@@ -43,14 +43,14 @@
     ['Paren (interpret-exp! (list-ref exp-list 2))]
     ;; TODO make this actually construct vals
     ['Con (interpret-QName! (list-ref exp-list 2))]
-    ['App (let ([fun-id (interpret-exp! (list-ref exp-list 2))]
-		[args (interpret-exp! (list-ref exp-list 3))])
-	    (list 'App fun-id args))]
+    ['App (let ([fun-id (interpret-exp! (list-ref match-list 2))]
+		  [args (interpret-exp! (list-ref match-list 3))])
+	      (list 'App fun-id args))]
     ;; Infix operator application; read arguments, operator, apply
     ['InfixApp (let ([item-1 (interpret-exp! (list-ref exp-list 2))]
 		     [op (interpret-QOp! (list-ref exp-list 3))]
 		     [item-2 (interpret-exp! (list-ref exp-list 4))])
-		 (list 'App op (list item-1 item-2)))]))
+		 (apply op (list item-1 item-2)))]))
 
 ;; Arguements to a function, but really any pattern to match
 (define (interpret-Pat! pat-list)
@@ -96,12 +96,11 @@
 	    (letrec ([decl (interpret-decl! (build-list-exp s-expr-port))]
 		     ;; OR all the path constraints together, unless there is
 		     ;; just one
-		     ;; [paths (let ([constraints (symbolic-exec decl top-level)])
-		     ;; 	      (cond
-		     ;; 	       [(list? constraints) (apply || constraints)]
-		     ;; 	       [else constraints])
-		     ;; 	      )])
-		     )
+		     ;;[paths (let ([constraints (symbolic-exec decl top-level)])
+			      (cond
+			       [(list? constraints) (apply || constraints)]
+			       [else constraints])
+			      )])
 	      (begin ;; Assert some principle about the possible path constraints
 		;; (solve (assert (and paths (> top-level 10))))
 		;; (printf "~a\n" paths)

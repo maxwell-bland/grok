@@ -12,4 +12,6 @@ echo "---------"
 racket -t main.rkt -m -- ../../../Test/Parses/fun_Add.parse decl
 echo "---------"
 racket -t main.rkt -m -- ../../../Test/Parses/fun_if_else.parse decl
+echo "---------"
+racket -t main.rkt -m -- ../../../Test/Parses/fun_if_else_recursion.parse decl
 echo "Done!"

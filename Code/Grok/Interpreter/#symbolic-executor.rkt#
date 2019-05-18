@@ -1,6 +1,0 @@
-#lang rosette
-
-(provide symbolic-exec)
-
-;; Returns a list of paths which the top level should be
-;; equal to
